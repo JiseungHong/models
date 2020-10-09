@@ -1,5 +1,7 @@
 ![Logo](https://storage.googleapis.com/model_garden_artifacts/TF_Model_Garden.png)
 
+[CS409] Software Projects for Industrial Collaboration - team 7.
+
 # Welcome to the Model Garden for TensorFlow
 
 The TensorFlow Model Garden is a repository with a number of different implementations of state-of-the-art (SOTA) models and modeling solutions for TensorFlow users. We aim to demonstrate the best practices for modeling so that TensorFlow users
