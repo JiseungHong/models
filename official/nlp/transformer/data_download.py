@@ -21,6 +21,7 @@ from __future__ import print_function
 import os
 import random
 import tarfile
+import csv
 
 # pylint: disable=g-bad-import-order
 
@@ -44,44 +45,36 @@ from official.utils.flags import core as flags_core
 # min_count is the minimum number of times a token must appear in the data
 # before it is added to the vocabulary. "Best min count" refers to the value
 # that generates a vocabulary set that is closest in size to _TARGET_VOCAB_SIZE.
+
+# TRAIN_DATA_SOURCES : train.csv
 _TRAIN_DATA_SOURCES = [
     {
-        "url": "http://data.statmt.org/wmt17/translation-task/"
-               "training-parallel-nc-v12.tgz",
-        "input": "news-commentary-v12.de-en.en",
-        "target": "news-commentary-v12.de-en.de",
-    },
-    {
-        "url": "http://www.statmt.org/wmt13/training-parallel-commoncrawl.tgz",
-        "input": "commoncrawl.de-en.en",
-        "target": "commoncrawl.de-en.de",
-    },
-    {
-        "url": "http://www.statmt.org/wmt13/training-parallel-europarl-v7.tgz",
-        "input": "europarl-v7.de-en.en",
-        "target": "europarl-v7.de-en.de",
+        "url": ".",
+        "input": "traininput.csv",
+        "target": "traintarget.csv",
     },
 ]
 # Use pre-defined minimum count to generate subtoken vocabulary.
 _TRAIN_DATA_MIN_COUNT = 6
 
+#EVAL_DATA_SOURCES : eval.csv
 _EVAL_DATA_SOURCES = [{
-    "url": "http://data.statmt.org/wmt17/translation-task/dev.tgz",
-    "input": "newstest2013.en",
-    "target": "newstest2013.de",
+    "url": ".",
+    "input": "evalinput.csv",
+    "target": "evaltarget.csv",
 }]
 
+#TEST_DATA_SOURCES : test.cdsv
 _TEST_DATA_SOURCES = [{
-    "url": ("https://storage.googleapis.com/tf-perf-public/"
-            "official_transformer/test_data/newstest2014.tgz"),
-    "input": "newstest2014.en",
-    "target": "newstest2014.de",
+    "url": ".",
+    "input": "testinput.csv",
+    "target": "testtarget.csv",
 }]
 
 # Vocabulary constants
 _TARGET_VOCAB_SIZE = 32768  # Number of subtokens in the vocabulary list.
 _TARGET_THRESHOLD = 327  # Accept vocabulary if size is within this threshold
-VOCAB_FILE = "vocab.ende.%d" % _TARGET_VOCAB_SIZE
+VOCAB_FILE = "vocab.file.%d" % _TARGET_VOCAB_SIZE
 
 # Strings to inclue in the generated files.
 _PREFIX = "wmt32k"
@@ -132,11 +125,40 @@ def get_raw_files(raw_dir, data_source):
       "inputs": [],
       "targets": [],
   }  # keys
+
+  with open('test.csv', 'r') as testfile, open('testinput.csv', 'w', newline='') as testinputfile, open('testtarget.csv', 'w', newline='') as testtargetfile:
+    rdr = csv.reader(testfile)
+    wr_input = csv.writer(testinputfile)
+    wr_target = csv.writer(testtargetfile)
+    for i, line in enumerate(rdr):
+      if i == 0:
+        continue
+      wr_input.writerow([line[1]])
+      wr_target.writerow([line[2]])
+
+  with open('train.csv', 'r') as trainfile, open('traininput.csv', 'w', newline='') as traininputfile, open('traintarget.csv', 'w', newline='') as traintargetfile:
+    rdr = csv.reader(trainfile)
+    wr_input = csv.writer(traininputfile)
+    wr_target = csv.writer(traintargetfile)
+    for i, line in enumerate(rdr):
+      if i == 0:
+        continue
+      wr_input.writerow([line[1]])
+      wr_target.writerow([line[2]])
+  with open('eval.csv', 'r') as evalfile, open('evalinput.csv', 'w', newline='') as evalinputfile, open('evaltarget.csv', 'w', newline='') as evaltargetfile:
+    rdr = csv.reader(evalfile)
+    wr_input = csv.writer(evalinputfile)
+    wr_target = csv.writer(evaltargetfile)
+    for i, line in enumerate(rdr):
+      if i == 0:
+        continue
+      wr_input.writerow([line[1]])
+      wr_target.writerow([line[2]])
   for d in data_source:
-    input_file, target_file = download_and_extract(raw_dir, d["url"],
-                                                   d["input"], d["target"])
-    raw_files["inputs"].append(input_file)
-    raw_files["targets"].append(target_file)
+    input_file, target_file = download_and_extract(raw_dir, d["url"], d["input"], d["target"])
+  raw_files["inputs"].append(input_file)
+  raw_files["targets"].append(target_file)
+
   return raw_files
 
 
@@ -194,22 +216,23 @@ def download_and_extract(path, url, input_filename, target_filename):
   Raises:
     OSError: if the the download/extraction fails.
   """
+  print (path)
   # Check if extracted files already exist in path
-  input_file = find_file(path, input_filename)
-  target_file = find_file(path, target_filename)
-  if input_file and target_file:
-    logging.info("Already downloaded and extracted %s.", url)
-    return input_file, target_file
+  # input_file = find_file(path, input_filename)
+  # target_file = find_file(path, target_filename)
+  # if input_file and target_file:
+  #   logging.info("Already downloaded and extracted %s.", url)
+  #   return input_file, target_file
 
   # Download archive file if it doesn't already exist.
-  compressed_file = download_from_url(path, url)
+  # compressed_file = download_from_url(path, url)
 
-  # Extract compressed files
-  logging.info("Extracting %s.", compressed_file)
-  with tarfile.open(compressed_file, "r:gz") as corpus_tar:
-    corpus_tar.extractall(path)
+  # # Extract compressed files
+  # logging.info("Extracting %s.", compressed_file)
+  # with tarfile.open(compressed_file, "r:gz") as corpus_tar:
+  #   corpus_tar.extractall(path)
 
-  # Return file paths of the requested files.
+  # # Return file paths of the requested files.
   input_file = find_file(path, input_filename)
   target_file = find_file(path, target_filename)
 
@@ -389,9 +412,10 @@ def main(unused_argv):
   # Get paths of download/extracted training and evaluation files.
   logging.info("Step 2/5: Downloading data from source")
   train_files = get_raw_files(FLAGS.raw_dir, _TRAIN_DATA_SOURCES)
+  print (train_files)
   eval_files = get_raw_files(FLAGS.raw_dir, _EVAL_DATA_SOURCES)
 
-  # Create subtokenizer based on the training files.
+  # # Create subtokenizer based on the training files.
   logging.info("Step 3/5: Creating subtokenizer and building vocabulary")
   train_files_flat = train_files["inputs"] + train_files["targets"]
   vocab_file = os.path.join(FLAGS.data_dir, VOCAB_FILE)
@@ -423,13 +447,13 @@ def define_data_download_flags():
   flags.DEFINE_string(
       name="data_dir",
       short_name="dd",
-      default="/tmp/translate_ende",
+      default=".",
       help=flags_core.help_wrap(
           "Directory for where the translate_ende_wmt32k dataset is saved."))
   flags.DEFINE_string(
       name="raw_dir",
       short_name="rd",
-      default="/tmp/translate_ende_raw",
+      default=".",
       help=flags_core.help_wrap(
           "Path where the raw data will be downloaded and extracted."))
   flags.DEFINE_bool(
