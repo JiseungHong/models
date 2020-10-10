@@ -90,7 +90,7 @@ tensorboard --logdir=$MODEL_DIR
 
    Arguments:
    * `--data_dir`: Path where the preprocessed data and vocab file will be saved.
-   * `--data_dir`: Path where the preprocessed data is placed.
+   * `--raw_dir`: Path where the preprocessed data is placed.
    * Use the `--help` or `-h` flag to get a full list of possible arguments.
 
 2. ### Model training and evaluation
