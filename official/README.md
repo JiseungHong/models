@@ -26,7 +26,7 @@ In the near future, we will add:
 This model is optimized for the text generation of (KOREAN) newspapers.
 Beware that this model differs from the original tensorflow/models in:
 
-- [Download and preprocess datasets](https://github.com/tensorflow/models/tree/master/official/nlp/transformer#download-and-preprocess-datasets)
+- [Download and preprocess datasets](https://github.com/JiseungHong/models/blob/master/official/nlp/transformer/README.md#download-and-preprocess-datasets)
 
 ## Table of Contents
 
