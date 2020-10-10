@@ -21,6 +21,13 @@ In the near future, we will add:
 * State-of-the-art image classification models.
 * State-of-the-art objection detection and instance segmentation models.
 
+## Transformer model for Text Generation >_0
+
+This model is optimized for the text generation of (KOREAN) newspapers.
+Beware that this model differs from the original tensorflow/models in:
+
+-[Download and preprocess datasets](https://github.com/tensorflow/models/tree/master/official/nlp/transformer#download-and-preprocess-datasets)
+
 ## Table of Contents
 
 - [Models and Implementations](#models-and-implementations)
@@ -141,6 +148,12 @@ os.environ['PYTHONPATH'] += ":/path/to/models"
 
 ```shell
 pip3 install --user -r official/requirements.txt
+```
+
+If you are using virtual environment, delete the user flag as follows.
+
+```shell
+pip3 install -r official/requirements.txt
 ```
 
 ## Contributions

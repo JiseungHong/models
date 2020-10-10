@@ -79,17 +79,18 @@ tensorboard --logdir=$MODEL_DIR
 
 1. ### Download and preprocess datasets
 
-   [data_download.py](data_download.py) downloads and preprocesses the training and evaluation WMT datasets. After the data is downloaded and extracted, the training data is used to generate a vocabulary of subtokens. The evaluation and training strings are tokenized, and the resulting data is sharded, shuffled, and saved as TFRecords.
+   [data_download.py](data_download.py) downloads and preprocesses the training and evaluation datasets. After the data is downloaded and extracted, the training data is used to generate a vocabulary of subtokens. The evaluation and training strings are tokenized, and the resulting data is sharded, shuffled, and saved as TFRecords.
 
-   1.75GB of compressed data will be downloaded. In total, the raw files (compressed, extracted, and combined files) take up 8.4GB of disk space. The resulting TFRecord and vocabulary files are 722MB. The script takes around 40 minutes to run, with the bulk of the time spent downloading and ~15 minutes spent on preprocessing.
+   1. Make sure to have your data files(train, test, , eval, dev) in a file extension of .csv file. The command will automatically split your dataset into two independent datasets: input file and target file. Keep in mind that the default value of the FLAGS data_dir and raw_dir is set to current directory ".".
 
    Command to run:
    ```
-   python3 data_download.py --data_dir=$DATA_DIR
+   python3 data_download.py --data_dir=$DATA_DIR --raw_dir=$RAW_DIR
    ```
 
    Arguments:
-   * `--data_dir`: Path where the preprocessed TFRecord data, and vocab file will be saved.
+   * `--data_dir`: Path where the preprocessed data and vocab file will be saved.
+   * `--data_dir`: Path where the preprocessed data is placed.
    * Use the `--help` or `-h` flag to get a full list of possible arguments.
 
 2. ### Model training and evaluation
