@@ -42,6 +42,9 @@ from official.nlp.transformer.utils import tokenizer
 from official.utils.flags import core as flags_core
 from official.utils.misc import keras_utils
 
+import tensorflow as tf
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+
 INF = int(1e9)
 BLEU_DIR = "bleu"
 _SINGLE_SAMPLE = 1
