@@ -44,14 +44,11 @@ python3 data_download.py --data_dir=$DATA_DIR
 # Train the model for 100000 steps and evaluate every 5000 steps on a single GPU.
 # Each train step, takes 4096 tokens as a batch budget with 64 as sequence
 # maximal length.
-python3 transformer_main.py --data_dir=$DATA_DIR --model_dir=$MODEL_DIR \
-    --vocab_file=$VOCAB_FILE --param_set=$PARAM_SET \
+python3 transformer_main.py --data_dir=$DATA_DIR --model_dir="./model" \
+    --vocab_file=$VOCAB_FILE --param_set=tiny \
     --train_steps=100000 --steps_between_evals=5000 \
-    --batch_size=4096 --max_length=64 \
-    --bleu_source=$DATA_DIR/newstest2014.en \
-    --bleu_ref=$DATA_DIR/newstest2014.de \
-    --num_gpus=1 \
-    --enable_time_history=false
+    --max_length=64 \
+    --num_gpus=0 --distribution_strategy=off --use_synthetic_data=false --enable_time_history=false \
 
 # Run during training in a separate process to get continuous updates,
 # or after training is complete.
