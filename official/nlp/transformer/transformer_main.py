@@ -32,7 +32,7 @@ import tensorflow as tf
 from official.common import distribute_utils
 from official.modeling import performance
 from official.nlp.transformer import compute_bleu
-from official.nlp.transformer import data_pipeline
+import data_pipeline
 from official.nlp.transformer import metrics
 from official.nlp.transformer import misc
 from official.nlp.transformer import optimizer
@@ -193,6 +193,7 @@ class TransformerTask(object):
     return False
 
   def train(self):
+    print("\n train train train train \n")
     """Trains the model."""
     params = self.params
     flags_obj = self.flags_obj

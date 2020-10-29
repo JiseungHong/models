@@ -231,6 +231,10 @@ def _read_and_batch_from_files(file_pattern,
     tf.data.Dataset object containing examples loaded from the files.
   """
   dataset = tf.data.Dataset.list_files(file_pattern, shuffle=shuffle)
+  temp = 0
+  for data in dataset:
+    print(data)
+
 
   if ctx and ctx.num_input_pipelines > 1:
     logging.info("Shard %d of the dataset.", ctx.input_pipeline_id)
@@ -295,7 +299,8 @@ def _generate_synthetic_data(params):
 
 def train_input_fn(params, ctx=None):
   """Load and return dataset of batched examples for use during training."""
-  file_pattern = os.path.join(params["data_dir"] or "", "*train*")
+  print("\n Train input In.\n")
+  file_pattern = os.path.join(params["data_dir"] or "", "*train-*")
   if params["use_synthetic_data"]:
     return _generate_synthetic_data(params)
   return _read_and_batch_from_files(
