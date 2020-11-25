@@ -2,6 +2,9 @@ import csv
 import re
 import kss
 
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
 data_dir = 'sample_output.csv'
 
 with open(data_dir, newline='') as read_file:
@@ -14,9 +17,33 @@ with open(data_dir, newline='') as read_file:
     # (a) Preprocessing.
     for row in reader:
         # (a-1) Extracting key sentence from the content.
-        content = kss.split_sentences(row['content'])[0]
+        contents = kss.split_sentences(row['content'])
         title = row['\ufefftitle']
         
+        # corpus is a list containing title and contents. It is used to vectorize words.
+        corpus = []
+        corpus.append(title)
+        corpus.extend(contents)
+        
+        # Vectorization.
+        tfidf_vectorizer = TfidfVectorizer()
+        tfidf_matrix = tfidf_vectorizer.fit_transform(corpus)
+        
+        assert(tfidf_matrix.shape[0] >= 2)
+        
+        max_cos_similarity, max_size = 0, tfidf_matrix.shape[0]
+        max_sim_idx = 1
+        for i, val in enumerate(tfidf_matrix):
+            if i==0 or i==max_size-1:
+                continue
+            else:
+                similarity = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[i:i+1])
+                if similarity > max_cos_similarity:
+                    max_cos_similarity = similarity
+                    max_sim_idx = i
+        
+        content = corpus[max_sim_idx]
+              
         # (a-2) Preprocessing the title, content.
         bracket_pattern = r'\[.*\]'
         paren_pattern = r'\(.*\)'
@@ -38,4 +65,4 @@ with open(data_dir, newline='') as read_file:
         
         writer.writeheader()
         for row in preprocessed_reader:
-            writer.writerow({'': '9999995', 'title': row['title'], 'content': row['content']})
+            writer.writerow({'': '9999999', 'title': row['title'], 'content': row['content']})
