@@ -5,6 +5,16 @@ import kss
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+from konlpy.tag import Okt
+okt = Okt()
+
+def morpheme(sentence):
+    morphemes = okt.pos(sentence, norm=True, stem=False)
+    list = [x[0] for x in morphemes if x[1] not in ['Josa', 'Punctuation']]
+    target = " ".join(list)
+    
+    return target
+
 data_dir = 'sample_output.csv'
 
 with open(data_dir, newline='') as read_file:
@@ -25,9 +35,12 @@ with open(data_dir, newline='') as read_file:
         corpus.append(title)
         corpus.extend(contents)
         
+        corpus_morpheme = [morpheme(x) for x in corpus]
+        
+        # 형태소 분석후 각각의 형태소를 space 단위로 쪼개서 입력해야한다.
         # Vectorization.
         tfidf_vectorizer = TfidfVectorizer()
-        tfidf_matrix = tfidf_vectorizer.fit_transform(corpus)
+        tfidf_matrix = tfidf_vectorizer.fit_transform(corpus_morpheme)
         
         assert(tfidf_matrix.shape[0] >= 2)
         
@@ -42,17 +55,19 @@ with open(data_dir, newline='') as read_file:
                     max_cos_similarity = similarity
                     max_sim_idx = i
         
+        print(max_cos_similarity)
         content = corpus[max_sim_idx]
               
         # (a-2) Preprocessing the title, content.
-        bracket_pattern = r'\[.*\]'
+        bracket_pattern = r'\s*\[.*\]\s*'
         paren_pattern = r'\(.*\)'
         
         preprocessed_content = re.compile(bracket_pattern).sub("", content)
         preprocessed_title = re.compile(bracket_pattern).sub("", title)
         
-        preprocessed_content = re.compile(paren_pattern).sub("", preprocessed_content)
-        preprocessed_title = re.compile(paren_pattern).sub("", preprocessed_title)
+        # I think parenthesis includes meaningful infos.
+        # preprocessed_content = re.compile(paren_pattern).sub("", preprocessed_content)
+        # preprocessed_title = re.compile(paren_pattern).sub("", preprocessed_title)
         
         preprocessed_reader.append({'title': preprocessed_title,
                                     'content': preprocessed_content})
@@ -65,4 +80,4 @@ with open(data_dir, newline='') as read_file:
         
         writer.writeheader()
         for row in preprocessed_reader:
-            writer.writerow({'': '9999999', 'title': row['title'], 'content': row['content']})
+            writer.writerow({'': '9999993', 'title': row['title'], 'content': row['content']})
